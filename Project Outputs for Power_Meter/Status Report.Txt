@@ -1,0 +1,20 @@
+Output: Gerber X2 Files
+Type  : GerberX2
+From  : Variant [[No Variations]] of Project [Power_Meter.PrjPcb]
+   Generated File[Power_Meter_Copper_Signal_Top.gbr]
+   Generated File[Power_Meter_Copper_Signal_Bot.gbr]
+   Generated File[Power_Meter_Legend_Top.gbr]
+   Generated File[Power_Meter_Legend_Bot.gbr]
+   Generated File[Power_Meter_Soldermask_Top.gbr]
+   Generated File[Power_Meter_Soldermask_Bot.gbr]
+   Generated File[Power_Meter_Paste_Top.gbr]
+   Generated File[Power_Meter_Paste_Bot.gbr]
+   Generated File[Power_Meter_Profile.gbr]
+   Generated File[Power_Meter_NPTH_Drill.gbr]
+   Generated File[Power_Meter_PTH_Drill.gbr]
+
+
+Files Generated   : 11
+Documents Printed : 0
+
+Finished Output Generation At 5:53:26 PM On 12/26/2022
