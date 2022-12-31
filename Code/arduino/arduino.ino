@@ -43,7 +43,7 @@ void loop() // runs repeatedly after setup() finishes
   current = sensorValue1/(80*0.02);
   power = (float*)malloc(10*sizeof(float));
   *(power+0) = current*sensorValue2*(115/15);
-  Serial.println(power) // output power to serial
+  Serial.println(power[0]) // output power to serial
   
   if (sensorValue1/(80) + sensorValue2*(115/15) < 24 ) {            // less than 24?
     digitalWrite(ledPin, LOW); }     // keep the LED off
