@@ -8,9 +8,9 @@ int ledPin = 13;     // The LED is connected on pin 13
 float sensorValue1;     // variable1 to store data
 float sensorValue2;     // Variable2 to store data
 float current;  // Current I
-float power; // measured power
+float* power = NULL; // measured power
 float newest_value; // the value that's gonna be displayed on the lcd screen after disconnection of the device
-float new_value = 0;
+float new_value;
 float summation = 0; // sum of little trapezoids over time
 const uint8_t ADC_RES = 12; // ADC bits
 const float VREF = 3.3; // Analog reference voltage
@@ -41,7 +41,8 @@ void loop() // runs repeatedly after setup() finishes
   sensorValue1 = pico.analogRead(sensorPin1, 10);  // read pin 32   
   sensorValue2 = pico.analogRead(sensorPin2, 10);
   current = sensorValue1/(80*0.02);
-  power = current*sensorValue2*(115/15);
+  power = (float*)malloc(10*sizeof(float));
+  *(power+0) = current*sensorValue2*(115/15);
   Serial.println(power) // output power to serial
   
   if (sensorValue1/(80) + sensorValue2*(115/15) < 24 ) {            // less than 24?
@@ -52,16 +53,18 @@ void loop() // runs repeatedly after setup() finishes
  
   if (power > 0) {
     lcd.setCursor(1,1); // time to display
-    summation += (new_value+power)*0.1/2;
+    summation += (new_value+power[0])*0.1/2;
     lcd.print("%.5f", summation);
     lcd.print((char)74);
-    lcd.print("J");
-    new_value = power;
+    lcd.print("j");
+    new_value = power[0];
     newest_value = summation;
-  }
-  lcd.setCursor(1,1);
-  lcd.print("%.5f", newest_value);
-  lcd.print((char)74);
-  lcd.print("J");
+    free(power);
+    power = NULL;
+  }else{
+   lcd.setCursor(1,1);
+   lcd.print("%.5f", newest_value);
+   lcd.print((char)74);
+   lcd.print("j");}
   delay(100);             // Pause 100 milliseconds
 }
