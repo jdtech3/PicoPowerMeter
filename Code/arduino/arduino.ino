@@ -59,12 +59,13 @@ void loop() // runs repeatedly after setup() finishes
     lcd.print("j");
     new_value = power[0];
     newest_value = summation;
-    free(power);
-    power = NULL;
   }else{
    lcd.setCursor(1,1);
    lcd.print("%.5f", newest_value);
    lcd.print((char)74);
-   lcd.print("j");}
+   lcd.print("j");
+   }
+  free(power);
+  power = NULL;
   delay(100);             // Pause 100 milliseconds
 }
