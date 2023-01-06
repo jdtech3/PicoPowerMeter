@@ -51,12 +51,6 @@ void setup() {
   tft.fillScreen(TFT_BLACK);
   analogReadResolution(12);
   digitalWrite(PS_PIN, HIGH);
-  int threshold(double a){
-    if(a > 24){
-      return 1;
-    }
-    return 0;
-  }
 }
 
 void loop() {
@@ -107,3 +101,9 @@ void loop() {
   tft.print(buf);
   delay(10);
 }
+int threshold(double a){
+    if(a > 24){
+      return 1;
+    }
+    return 0;
+  }
