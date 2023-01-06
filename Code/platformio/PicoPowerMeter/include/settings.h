@@ -7,6 +7,7 @@
 
 // --- Pins ---
 #define PIN_VOUTDIV             26
+#define PIN_VDROPAMP            27
 #define PIN_GNDREF              28
 
 // --- Number/speed of measurements to average ---
