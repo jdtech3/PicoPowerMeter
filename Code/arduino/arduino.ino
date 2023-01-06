@@ -1,5 +1,6 @@
 #include <Arduino.h>    // Arduino core
 #include "SPI.h"        // LCD
+#include "pico/time.h" //for time span measurement
 #include <TFT_eSPI.h>
 
 extern "C" {                  // Reboot into USB mode
@@ -24,7 +25,8 @@ TFT_eSPI tft = TFT_eSPI();
 double voltage;
 double current;
 double power;
-double temporary_pow = 0; //temporarily store a power value
+absolute_time_t last_measurement_time = 0;
+double temporary_pow = 0.0; //temporarily store a power value
 double energy;
 
 void reset_measurements() {
@@ -106,12 +108,13 @@ void loop() {
 
   // Calculate and display P
   power = current * voltage;
+  absolute_time_t new_time = get_absolute_time();
   println_to_tft("P: %.3f W", power);
 
   // Calculate and display E
-  energy += (power+temporary_pow)/2;
+  energy += (power+temporary_pow)*(new_time-last_measurement_time)/2*1000000;
   println_to_tft("E: %.3f J", energy);
   temporary_pow = power;
-  
+  last_measurement_time = new_time;
   delay(10);  // slow down loop
 }
