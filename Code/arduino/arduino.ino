@@ -67,7 +67,7 @@ void loop() {
     current = analogRead(PIN_VDROPAMP)/80;
     delay(0.1);
     double test = analogRead(PIN_VDROPAMP)/80;
-    if(test-current < 0.001 && current-test < 0.001)
+    if((test-current)/current < 0.001 && (current-test)/current < 0.001)
       break;
   }
   print_f("I: %.4f A", current, 23);
