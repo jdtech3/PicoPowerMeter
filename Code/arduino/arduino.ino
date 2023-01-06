@@ -1,7 +1,6 @@
-#include <Arduino.h>    // Arduino core
 #include "SPI.h"        // LCD
 #include "pico/time.h" //for time span measurement
-#include <TFT_eSPI.h>
+#include <TFT_eSPI.h> // also LCD
 
 extern "C" {                  // Reboot into USB mode
   #include "pico/bootrom.h"   // C linkage guard required per https://forums.raspberrypi.com/viewtopic.php?t=302963
@@ -17,7 +16,7 @@ extern "C" {                  // Reboot into USB mode
 #define TEXT_ROW_SPACING        15
 #define TEXT_FONT_SIZE          1
 
-#define VOUT_CONVERSION(x) ((( x * (3.295 / 4096.0) / 0.130383) - 0.22) * 1.048365)
+#define VOUT_CONVERSION(x) ((( x * (3.295 / 4096.0) / 0.130383) - 0.22) * 1.048365) //output correction for voltage
 #define ADC_correction (3.295/4096.0)
 
 TFT_eSPI tft = TFT_eSPI();
