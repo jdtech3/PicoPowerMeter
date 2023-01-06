@@ -75,7 +75,7 @@ void loop() {
   print_f("P: %.4f Wh", current*voltage, 43);
   // value of energy
   enegry += power;
-  printf("E: %.4f J", energy, 63);
+  print_f("E: %.4f J", energy, 63);
   delay(10);
 }
 
