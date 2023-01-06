@@ -17,15 +17,15 @@ extern "C" {                  // Reboot into USB mode
 #define TEXT_ROW_SPACING        15
 #define TEXT_FONT_SIZE          1
 
-#define VOUT_MAGIC_CONVERSION(x) ((( x * (3.295 / 4096.0) / 0.130383) - 0.22) * 1.048365)  // TODO: replace magic with settings
-#define ADC_correction 3.295/4096.0
+#define VOUT_CONVERSION(x) ((( x * (3.295 / 4096.0) / 0.130383) - 0.22) * 1.048365)
+#define ADC_correction (3.295/4096.0)
 
 TFT_eSPI tft = TFT_eSPI();
 
 double voltage;
 double current;
 double power;
-absolute_time_t last_measurement_time = 0;
+absolute_time_t last_measurement_time; //time stamp
 double temporary_pow = 0.0; //temporarily store a power value
 double energy;
 
@@ -36,7 +36,7 @@ void reset_measurements() {
   power = 0.0;
 }
 
-void println_to_tft(const char fstr[], double val) {
+void println_to_tft(char* str, double val) {
   // Set cursor and clear
   tft.setCursor(TEXT_START_COL_OFFSET, TEXT_START_ROW_OFFSET + tft.getCursorY() + TEXT_ROW_SPACING);
   tft.print("                ");
@@ -44,7 +44,7 @@ void println_to_tft(const char fstr[], double val) {
 
   // Format and print
   char buf[16];
-  sprintf(buf, fstr, val);
+  sprintf(buf, str, val);
   tft.print(buf);
 }
 
@@ -65,6 +65,7 @@ void setup() {
   analogReadResolution(12);
   digitalWrite(PS_PIN, HIGH);
   reset_measurements();
+  last_measurement_time = get_absolute_time();// the very first time stamp
 }
 
 void loop() {
@@ -89,7 +90,7 @@ void loop() {
   }
   sum /= NUM_OF_MEASUREMENTS;
 
-  voltage = VOUT_MAGIC_CONVERSION(sum);
+  voltage = VOUT_CONVERSION(sum);
   println_to_tft("V: %.3f V", voltage);
 
   digitalWrite(PIN_LED, (voltage > 24.0) ? HIGH : LOW);   // overvoltage warning
@@ -108,13 +109,13 @@ void loop() {
 
   // Calculate and display P
   power = current * voltage;
-  absolute_time_t new_time = get_absolute_time();
+  absolute_time_t new_time = get_absolute_time();// the new time stamp
   println_to_tft("P: %.3f W", power);
 
   // Calculate and display E
-  energy += (power+temporary_pow)*(new_time-last_measurement_time)/2*1000000;
+  energy += (power+temporary_pow)*absolute_time_diff_us(last_measurement_time, new_time)/(2*1000000);
   println_to_tft("E: %.3f J", energy);
   temporary_pow = power;
-  last_measurement_time = new_time;
+  last_measurement_time = new_time;// pass on the time stamp
   delay(10);  // slow down loop
 }
