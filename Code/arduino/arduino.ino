@@ -64,9 +64,9 @@ void loop() {
   print_f("V: %.4f V", voltage, 3);
   // Value of I (calibrated)
   for(;;){
-    current = analogRead(PIN_VDROPAMP)/80;
+    current = analogRead(PIN_VDROPAMP)*(3.295/4096.0)/80;
     delay(0.1);
-    double test = analogRead(PIN_VDROPAMP)/80;
+    double test = analogRead(PIN_VDROPAMP)*(3.295/4096.0)/80;
     if(abs((test-current)/current) < 0.001)
       break;
   }
