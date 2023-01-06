@@ -1,68 +1,67 @@
-#include <Arduino.h>
-#include "SPI.h"
+#include <Arduino.h>    // Arduino core
+#include "SPI.h"        // LCD
 #include <TFT_eSPI.h>
 
-// Default color definitions
-#define TFT_BLACK       0x0000      /*   0,   0,   0 */
-#define TFT_NAVY        0x000F      /*   0,   0, 128 */
-#define TFT_DARKGREEN   0x03E0      /*   0, 128,   0 */
-#define TFT_DARKCYAN    0x03EF      /*   0, 128, 128 */
-#define TFT_MAROON      0x7800      /* 128,   0,   0 */
-#define TFT_PURPLE      0x780F      /* 128,   0, 128 */
-#define TFT_OLIVE       0x7BE0      /* 128, 128,   0 */
-#define TFT_LIGHTGREY   0xD69A      /* 211, 211, 211 */
-#define TFT_DARKGREY    0x7BEF      /* 128, 128, 128 */
-#define TFT_BLUE        0x001F      /*   0,   0, 255 */
-#define TFT_GREEN       0x07E0      /*   0, 255,   0 */
-#define TFT_CYAN        0x07FF      /*   0, 255, 255 */
-#define TFT_RED         0xF800      /* 255,   0,   0 */
-#define TFT_MAGENTA     0xF81F      /* 255,   0, 255 */
-#define TFT_YELLOW      0xFFE0      /* 255, 255,   0 */
-#define TFT_WHITE       0xFFFF      /* 255, 255, 255 */
-#define TFT_ORANGE      0xFDA0      /* 255, 180,   0 */
-#define TFT_GREENYELLOW 0xB7E0      /* 180, 255,   0 */
-#define TFT_PINK        0xFE19      /* 255, 192, 203 */
-#define TFT_BROWN       0x9A60      /* 150,  75,   0 */
-#define TFT_GOLD        0xFEA0      /* 255, 215,   0 */
-#define TFT_SILVER      0xC618      /* 192, 192, 192 */
-#define TFT_SKYBLUE     0x867D      /* 135, 206, 235 */
-#define TFT_VIOLET      0x915C      /* 180,  46, 226 */
+extern "C" {                  // Reboot into USB mode
+  #include "pico/bootrom.h"   // C linkage guard required per https://forums.raspberrypi.com/viewtopic.php?t=302963
+}
+
+#include "utils.h"      // Bootsel detection
+#include "settings.h"   // Settings
 
 #define PS_PIN      23
-#define PIN_VOUTDIV 26
-#define PIN_GNDREF  28
 
 TFT_eSPI tft = TFT_eSPI();
 
-double voltage = 0.0;
-double current = 0.0;
-// double power = 0.0;
-double energy = 0.0;
-double* power = NULL;
-// PicoAnalogCorrection pico(12, 3.3);
+double voltage;
+double current;
+double power;
+double energy;
+
+void reset_measurements() {
+  voltage = 0.0;
+  current = 0.0;
+  energy = 0.0;
+  power = 0.0;
+}
 
 void setup() {
+  // Pins
   pinMode(PIN_LED, OUTPUT);
   pinMode(PIN_VOUTDIV, INPUT);
   pinMode(PIN_GNDREF, INPUT);
-  // pico.calibrateAdc(PIN_GNDREF, PIN_VOUTDIV, 5000);
+
+  // TFT
   tft.init();
   tft.setRotation(1);
   tft.setTextSize(1);
   tft.fillScreen(TFT_BLACK);
+
+  // Measurements
   analogReadResolution(12);
   digitalWrite(PS_PIN, HIGH);
+  reset_measurements();
 }
 
 void loop() {
-  double sum=0.0;
-  for(int i = 0; i< 1000; i++){
-    sum += (analogRead(PIN_VOUTDIV) - analogRead(PIN_GNDREF));
-    delay(1);
-  }
-  sum /= 1000.0;
+  if (get_bootsel_button()) {
+    digitalWrite(PIN_LED, HIGH);
 
-  voltage = (((sum) * (3.295 / 4096.0) / 0.130383) - 0.22) * 1.048365;
+    #ifdef BOOTSEL_BUTTON_MODE_BOOTSEL
+      reset_usb_boot(0, 0);
+    #elif BOOTSEL_BUTTON_MODE_CLEAR_MEASUREMENTS
+      reset_measurements();
+    #endif
+  }
+
+  double sum = 0.0;
+  for (int i = 0; i < NUM_OF_MEASUREMENTS; i++) {
+    sum += (analogRead(PIN_VOUTDIV) - analogRead(PIN_GNDREF));
+    delay(MEASUREMENT_DELAY);
+  }
+  sum /= (double)NUM_OF_MEASUREMENTS;
+
+  voltage = (((sum) * (3.295 / 4096.0) / 0.130383) - 0.22) * 1.048365;  // TODO: replace magic with settings
   // voltage *= 1.0577;
   // voltage = analogRead(PIN_ADC0);
 
