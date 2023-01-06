@@ -58,50 +58,32 @@ void loop() {
     sum += (analogRead(PIN_VOUTDIV) - analogRead(PIN_GNDREF));
     delay(1);
   }
-  
   sum /= 1000.0;
-  
   voltage = Vout(sum);
-  digitalWrite(PIN_LED, threshold(voltage)? HIGH : LOW);
-  tft.setCursor(3, 3);
-  char buf[16];
-  sprintf(buf, "V: %.4f V", voltage);
-  tft.print("                ");
-  tft.setCursor(3, 3);
-  tft.print(buf);
+  digitalWrite(PIN_LED, (voltage > 24)? HIGH : LOW);
+  print_f("V: %.4f V", voltage, 3);
   // Value of I (calibrated)
   for(;;){
     current = analogRead(PIN_VDROPAMP)/80;
     delay(0.1);
     double test = analogRead(PIN_VDROPAMP)/80;
-    if(test-current < 0.001 || current-test < 0.001)
+    if(test-current < 0.001 && current-test < 0.001)
       break;
   }
-  tft.setCursor(3, 23);
-  strcpy(buf, "\0");
-  sprintf(buf, "I: %.4f A", current);
-  tft.print("                ");
-  tft.setCursor(3, 23);
-  tft.print(buf);
-  strcpy(buf, "\0");
+  print_f("I: %.4f A", current, 23);
   // value of power
-  tft.setCursor(3, 43);
-  sprintf(buf, "P: %.4f W", current*voltage)
-  tft.print("                ");
-  tft.setCursor(3, 43);
-  tft.print(buf);
+  print_f("P: %.4f Wh", current*voltage, 43);
   // value of energy
-  tft.setCursor(3, 63);
   enegry += power;
-  sprintf(buf, "E: %.4f J", energy);
-  tft.print("                ");
-  tft.setCursor(3, 63);
-  tft.print(buf);
+  printf("E: %.4f J", energy, 63);
   delay(10);
 }
-int threshold(double a){
-    if(a > 24){
-      return 1;
-    }
-    return 0;
-  }
+
+void print_f(char* ptr, double a, int b){
+  tft.setCursot(3, b);
+  char buf[16];
+  sprintf(buf, ptr, a);
+  tft.print("                 ");
+  tft.setCursor(3, b);
+  tft.print(buf);
+}
