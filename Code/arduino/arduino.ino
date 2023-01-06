@@ -1,10 +1,7 @@
-#include <hardware/watchdog.h>
-#include <PicoAnalogCorrection.h>
 #include "SPI.h"
 #include <TFT_eSPI.h>
 
 // Default color definitions
-#define DISABLE_ALL_LIBRARY_WARNINGS
 #define TFT_BLACK       0x0000      /*   0,   0,   0 */
 #define TFT_NAVY        0x000F      /*   0,   0, 128 */
 #define TFT_DARKGREEN   0x03E0      /*   0, 128,   0 */
@@ -30,89 +27,63 @@
 #define TFT_SKYBLUE     0x867D      /* 135, 206, 235 */
 #define TFT_VIOLET      0x915C      /* 180,  46, 226 */
 
-int vcc=A0;
-int gnd=A1;
-float sensorPin1 = 32;  // The Vdrop_amp on pin 32 
-float sensorPin2 = 31;  // The Vout_div on pin 31                 
-int ledPin = 13;     // The LED is connected on pin 13
-float sensorValue1;     // variable1 to store data
-float sensorValue2;     // Variable2 to store data
-float current;  // Current I
-float* power = NULL; // measured power
-float newest_value; // the value that's gonna be displayed on the lcd screen after disconnection of the device
-float new_value;
-float summation = 0; // sum of little trapezoids over time
-const uint8_t ADC_RES = 12; // ADC bits
-const float VREF = 3.3; // Analog reference voltage
-TFT_eSPI tft = TFT_eSPI();
-PicoAnalogCorrection pico(ADC_RES, VREF);
+#define PS_PIN      23
+#define PIN_VOUTDIV 26
+#define PIN_GNDREF  28
+#define PIN_VDROPAMP 27
+#define Vout(x) (((x*(3.295/4096.0)/0.130383) - 0.22) * 1.048365)
 
-void setup() // runs once when the sketch starts
-{
-  // make the LED pin (pin 13) an output pin
-  pinMode(ledPin, OUTPUT);
-  pinMode(vcc,OUTPUT);
-  pinMode(gnd,OUTPUT);
-  analogReadResolution(ADC_RES);
+TFT_eSPI tft = TFT_eSPI();
+
+double voltage = 0.0;
+double current = 0.0;
+double energy = 0.0;
+
+void setup() {
+  pinMode(PIN_LED, OUTPUT);
+  pinMode(PIN_VOUTDIV, INPUT);
+  pinMode(PIN_GNDREF, INPUT);
   tft.init();
   tft.setRotation(1);
-  tft.setTextSize(2);
+  tft.setTextSize(1);
   tft.fillScreen(TFT_BLACK);
-  // Calibrate ADC using an average of 5000 measurements
-  pico.calibrateAdc(gnd, vcc, 5000);
-  
-  Serial.begin(9600);
-  
-
+  analogReadResolution(12);
+  digitalWrite(PS_PIN, HIGH);
 }
 
-void loop() // runs repeatedly after setup() finishes
-{
-  sensorValue1 = pico.analogRead(sensorPin1);  // read pin 32   
-  sensorValue2 = pico.analogRead(sensorPin2);
-  current = sensorValue1/(80*0.02);
-  power = (float*)malloc(10*sizeof(float));
-  *(power+0) = current*sensorValue2*(115/15);
-  Serial.println(power[0]); // output power to serial
-  
-  if(sensorValue1/(80) + sensorValue2*(115/15) < 24 ){          
-    digitalWrite(ledPin, LOW); 
-  }else{                               
-    digitalWrite(ledPin, HIGH);
+void loop() {
+  // Value of Vout (calibrated)
+  double sum=0.0;
+  for(int i = 0; i< 1000; i++){
+    sum += (analogRead(PIN_VOUTDIV) - analogRead(PIN_GNDREF));
+    delay(1);
   }
-  
-  tft.setCursor(3, 3);
-  char* buf = (char*)malloc(100*sizeof(char));
-  sprintf(buf, "P: %.3f W", power[0]);
-  tft.print(buf);
-  if (power[0] > 0) {
-    // time to display
-    tft.setCursor(3, 63);
-    summation += (new_value+power[0])*0.1/2;
-    new_value = power[0];
-    char* buf2 = (char*)malloc(100*sizeof(char));
-    sprintf(buf2, "E: %.3f J", summation);
-    tft.print(buf2);
-    newest_value = summation;
-    free(power);
-    free(buf2);
-    buf2 = NULL;
-    power = NULL;
-  }else{
-    tft.setCursor(3, 63);
-    char* buf3 = (char*)malloc(100*sizeof(char));
-    sprintf(buf3, "E: %.3f J", newest_value);
-    tft.print(buf3);
-    free(buf3);
-    buf3 = NULL;
-   }
-  free(buf);
-  buf = NULL;
-  delay(100);             // Pause 100 milliseconds
+  sum /= 1000.0;
+  voltage = Vout(sum);
+  digitalWrite(PIN_LED, (voltage > 24)? HIGH : LOW);
+  print_f("V: %.4f V", voltage, 3);
+  // Value of I (calibrated)
+  for(;;){
+    current = analogRead(PIN_VDROPAMP)*(3.295/4096.0)/80;
+    delay(0.1);
+    double test = analogRead(PIN_VDROPAMP)*(3.295/4096.0)/80;
+    if(abs((test-current)/current) < 0.001)
+      break;
+  }
+  print_f("I: %.4f A", current, 23);
+  // value of power
+  print_f("P: %.4f Wh", current*voltage, 43);
+  // value of energy
+  enegry += power;
+  print_f("E: %.4f J", energy, 63);
+  delay(10);
 }
 
-void software_reset()
-{
-    watchdog_enable(1, 1);
-    while(1);
+void print_f(char* ptr, double a, int b){
+  tft.setCursot(3, b);
+  char buf[16];
+  sprintf(buf, ptr, a);
+  tft.print("                 ");
+  tft.setCursor(3, b);
+  tft.print(buf);
 }
