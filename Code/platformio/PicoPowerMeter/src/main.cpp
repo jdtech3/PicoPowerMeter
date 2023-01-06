@@ -32,7 +32,6 @@
 #define PIN_VOUTDIV 26
 #define PIN_GNDREF  28
 #define PIN_VDROPAMP 27
-#define PIN_LED 12
 #define Vout(x) (((x*(3.295/4096.0)/0.130383) - 0.22) * 1.048365)
 
 TFT_eSPI tft = TFT_eSPI();
