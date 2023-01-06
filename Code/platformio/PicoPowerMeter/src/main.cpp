@@ -51,6 +51,12 @@ void setup() {
   tft.fillScreen(TFT_BLACK);
   analogReadResolution(12);
   digitalWrite(PS_PIN, HIGH);
+  int threshold(double a){
+    if(a > 24){
+      return 1;
+    }
+    return 0;
+  }
 }
 
 void loop() {
@@ -60,16 +66,11 @@ void loop() {
     sum += (analogRead(PIN_VOUTDIV) - analogRead(PIN_GNDREF));
     delay(1);
   }
+  
   sum /= 1000.0;
+  
   voltage = Vout(sum);
-  // check if the voltage is too high
-  if (voltage > 24){
-    digitalWrite(PIN_LED, HIGH);
-    delay(1);
-    return -1;
-  }else{
-    digitalWrtie(PIN_LED, LOW);
-  }
+  digitalWrite(PIN_LED, threshold(voltage)? HIGH : LOW);
   tft.setCursor(3, 3);
   char buf[16];
   sprintf(buf, "V: %.4f V", voltage);
@@ -100,7 +101,6 @@ void loop() {
   // value of energy
   tft.setCursor(3, 63);
   enegry += power;
-  strcpy(buf, "\0");
   sprintf(buf, "E: %.4f J", energy);
   tft.print("                ");
   tft.setCursor(3, 63);
