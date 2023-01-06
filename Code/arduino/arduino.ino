@@ -1,89 +1,117 @@
-#include "SPI.h"
+#include <Arduino.h>    // Arduino core
+#include "SPI.h"        // LCD
 #include <TFT_eSPI.h>
 
-// Default color definitions
-#define TFT_BLACK       0x0000      /*   0,   0,   0 */
-#define TFT_NAVY        0x000F      /*   0,   0, 128 */
-#define TFT_DARKGREEN   0x03E0      /*   0, 128,   0 */
-#define TFT_DARKCYAN    0x03EF      /*   0, 128, 128 */
-#define TFT_MAROON      0x7800      /* 128,   0,   0 */
-#define TFT_PURPLE      0x780F      /* 128,   0, 128 */
-#define TFT_OLIVE       0x7BE0      /* 128, 128,   0 */
-#define TFT_LIGHTGREY   0xD69A      /* 211, 211, 211 */
-#define TFT_DARKGREY    0x7BEF      /* 128, 128, 128 */
-#define TFT_BLUE        0x001F      /*   0,   0, 255 */
-#define TFT_GREEN       0x07E0      /*   0, 255,   0 */
-#define TFT_CYAN        0x07FF      /*   0, 255, 255 */
-#define TFT_RED         0xF800      /* 255,   0,   0 */
-#define TFT_MAGENTA     0xF81F      /* 255,   0, 255 */
-#define TFT_YELLOW      0xFFE0      /* 255, 255,   0 */
-#define TFT_WHITE       0xFFFF      /* 255, 255, 255 */
-#define TFT_ORANGE      0xFDA0      /* 255, 180,   0 */
-#define TFT_GREENYELLOW 0xB7E0      /* 180, 255,   0 */
-#define TFT_PINK        0xFE19      /* 255, 192, 203 */
-#define TFT_BROWN       0x9A60      /* 150,  75,   0 */
-#define TFT_GOLD        0xFEA0      /* 255, 215,   0 */
-#define TFT_SILVER      0xC618      /* 192, 192, 192 */
-#define TFT_SKYBLUE     0x867D      /* 135, 206, 235 */
-#define TFT_VIOLET      0x915C      /* 180,  46, 226 */
+extern "C" {                  // Reboot into USB mode
+  #include "pico/bootrom.h"   // C linkage guard required per https://forums.raspberrypi.com/viewtopic.php?t=302963
+}
 
-#define PS_PIN      23
-#define PIN_VOUTDIV 26
-#define PIN_GNDREF  28
-#define PIN_VDROPAMP 27
-#define Vout(x) (((x*(3.295/4096.0)/0.130383) - 0.22) * 1.048365)
+#include "utils.h"      // Bootsel detection
+#include "settings.h"   // Settings
+
+#define PS_PIN      23  // Pico power supply mode pin
+
+#define TEXT_START_COL_OFFSET   3   // TFT text settings
+#define TEXT_START_ROW_OFFSET   3
+#define TEXT_ROW_SPACING        15
+#define TEXT_FONT_SIZE          1
+
+#define VOUT_MAGIC_CONVERSION(x) ((( x * (3.295 / 4096.0) / 0.130383) - 0.22) * 1.048365)  // TODO: replace magic with settings
+#define ADC_correction 3.295/4096.0
 
 TFT_eSPI tft = TFT_eSPI();
 
-double voltage = 0.0;
-double current = 0.0;
-double energy = 0.0;
+double voltage;
+double current;
+double power;
+double temporary_pow = 0; //temporarily store a power value
+double energy;
+
+void reset_measurements() {
+  voltage = 0.0;
+  current = 0.0;
+  energy = 0.0;
+  power = 0.0;
+}
+
+void println_to_tft(const char fstr[], double val) {
+  // Set cursor and clear
+  tft.setCursor(TEXT_START_COL_OFFSET, TEXT_START_ROW_OFFSET + tft.getCursorY() + TEXT_ROW_SPACING);
+  tft.print("                ");
+  tft.setCursor(TEXT_START_COL_OFFSET, tft.getCursorY());
+
+  // Format and print
+  char buf[16];
+  sprintf(buf, fstr, val);
+  tft.print(buf);
+}
 
 void setup() {
+  // Pins
   pinMode(PIN_LED, OUTPUT);
   pinMode(PIN_VOUTDIV, INPUT);
+  pinMode(PIN_VDROPAMP, INPUT);
   pinMode(PIN_GNDREF, INPUT);
+
+  // TFT
   tft.init();
   tft.setRotation(1);
-  tft.setTextSize(1);
+  tft.setTextSize(TEXT_FONT_SIZE);
   tft.fillScreen(TFT_BLACK);
+
+  // Measurements
   analogReadResolution(12);
   digitalWrite(PS_PIN, HIGH);
+  reset_measurements();
 }
 
 void loop() {
-  // Value of Vout (calibrated)
-  double sum=0.0;
-  for(int i = 0; i< 1000; i++){
-    sum += (analogRead(PIN_VOUTDIV) - analogRead(PIN_GNDREF));
-    delay(1);
-  }
-  sum /= 1000.0;
-  voltage = Vout(sum);
-  digitalWrite(PIN_LED, (voltage > 24)? HIGH : LOW);
-  print_f("V: %.4f V", voltage, 3);
-  // Value of I (calibrated)
-  for(;;){
-    current = analogRead(PIN_VDROPAMP)*(3.295/4096.0)/80;
-    delay(0.1);
-    double test = analogRead(PIN_VDROPAMP)*(3.295/4096.0)/80;
-    if(abs((test-current)/current) < 0.001)
-      break;
-  }
-  print_f("I: %.4f A", current, 23);
-  // value of power
-  print_f("P: %.4f Wh", current*voltage, 43);
-  // value of energy
-  enegry += power;
-  print_f("E: %.4f J", energy, 63);
-  delay(10);
-}
+  // BOOTSEL button detection
+  if (get_bootsel_button()) {
+    digitalWrite(PIN_LED, HIGH);
 
-void print_f(char* ptr, double a, int b){
-  tft.setCursot(3, b);
-  char buf[16];
-  sprintf(buf, ptr, a);
-  tft.print("                 ");
-  tft.setCursor(3, b);
-  tft.print(buf);
+    #ifdef BOOTSEL_BUTTON_MODE_BOOTSEL
+      reset_usb_boot(0, 0);
+    #elif BOOTSEL_BUTTON_MODE_CLEAR_MEASUREMENTS
+      reset_measurements();
+    #endif
+  }
+
+  tft.setCursor(0, -TEXT_ROW_SPACING);  // reset cursor
+
+  // Get and display Vout (calibrated)
+  double sum = 0.0;
+  for (int i = 0; i < NUM_OF_MEASUREMENTS; i++) {
+    sum += (analogRead(PIN_VOUTDIV) - analogRead(PIN_GNDREF));
+    delay(MEASUREMENT_DELAY);
+  }
+  sum /= NUM_OF_MEASUREMENTS;
+
+  voltage = VOUT_MAGIC_CONVERSION(sum);
+  println_to_tft("V: %.3f V", voltage);
+
+  digitalWrite(PIN_LED, (voltage > 24.0) ? HIGH : LOW);   // overvoltage warning
+
+
+  // Get and display I (calibrated)
+  for (;;) {
+    current = analogRead(PIN_VDROPAMP)*ADC_correction / 80;
+    delay(0.1);
+    double test = analogRead(PIN_VDROPAMP)*ADC_correction / 80;
+    if (abs((current - test) / current) < 0.001) break;
+  }
+
+  // Display I
+  println_to_tft("I: %.3f A", current);
+
+  // Calculate and display P
+  power = current * voltage;
+  println_to_tft("P: %.3f W", power);
+
+  // Calculate and display E
+  energy += (power+temporary_pow)/2;
+  println_to_tft("E: %.3f J", energy);
+  temporary_pow = power;
+  
+  delay(10);  // slow down loop
 }
