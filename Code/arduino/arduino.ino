@@ -27,6 +27,7 @@ double power;
 absolute_time_t last_measurement_time; //time stamp
 double temporary_pow = 0.0; //temporarily store a power value
 double energy;
+double time;
 
 void reset_measurements() {
   voltage = 0.0;
@@ -110,10 +111,11 @@ void loop() {
   power = current * voltage;
   absolute_time_t new_time = get_absolute_time();// the new time stamp
   println_to_tft("P: %.3f W", power);
-
+  // Calculate delta time for energy
+  time = absolute_time_diff_us(last_measurement_time, new_time)/(1000000*3600);
   // Calculate and display E
-  energy += (power+temporary_pow)*absolute_time_diff_us(last_measurement_time, new_time)/(2*1000000);
-  println_to_tft("E: %.3f J", energy);
+  energy += (power+temporary_pow)*time*0.5;
+  println_to_tft("E: %.3f Wh", energy);
   temporary_pow = power;
   last_measurement_time = new_time;// pass on the time stamp
   delay(10);  // slow down loop
