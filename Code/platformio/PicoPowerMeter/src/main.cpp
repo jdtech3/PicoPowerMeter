@@ -41,7 +41,7 @@ void println_to_tft(char* str, double val) {
   tft.setCursor(TEXT_START_COL_OFFSET, TEXT_START_ROW_OFFSET + tft.getCursorY() + TEXT_ROW_SPACING);
   tft.print("                ");
   tft.setCursor(TEXT_START_COL_OFFSET, tft.getCursorY());
-
+  
   // Format and print
   char buf[16];
   sprintf(buf, str, val);
@@ -54,7 +54,8 @@ void setup() {
   pinMode(PIN_VOUTDIV, INPUT);
   pinMode(PIN_VDROPAMP, INPUT);
   pinMode(PIN_GNDREF, INPUT);
-
+  //initialize serial communication
+  Serial.begin(9600);
   // TFT
   tft.init();
   tft.setRotation(1);
@@ -109,6 +110,7 @@ void loop() {
 
   // Calculate and display P
   power = current * voltage;
+  Serial.println(power);
   absolute_time_t new_time = get_absolute_time();// the new time stamp
   println_to_tft("P: %.3f W", power);
 
