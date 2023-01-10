@@ -98,9 +98,9 @@ void loop() {
 
   // Get and display I (calibrated)
   for (;;) {
-    current = analogRead(PIN_VDROPAMP)*ADC_correction / 80;
+    current = analogRead(PIN_VDROPAMP)*ADC_correction / 80 / 0.02;
     delay(0.1);
-    double test = analogRead(PIN_VDROPAMP)*ADC_correction / 80;
+    double test = analogRead(PIN_VDROPAMP)*ADC_correction / 80 / 0.02;
     if (abs((current - test) / current) < 0.001) break;
   }
 
