@@ -50,7 +50,7 @@ void println_to_tft(char* str, double val) {
 
 void calibration(double *a){
   if(*a<=3.048){
-    *a += (0.0392058401*(*a) + (-0.1511130402));
+    *a += (0.05013386496*(*a) + (-0.2319683329));
   }else if(*a <= 9.356){
     *a += 0.03801254021*(*a) + (-0.1511130402);
   }else if(*a <= 15.658){
