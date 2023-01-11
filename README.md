@@ -28,6 +28,11 @@ This seems to be due to the poor DNL and INL (differential and integral non-line
 
 Methodology and raw calibration data for our Pico is available [here](https://docs.google.com/spreadsheets/d/1IjrpbZwi6U-m_iKFwJcBlV5J3Jlb0WuwdMCl5kuGMQ8/edit?usp=sharing).
 
+## Contributors
+
+* [Joe Dai](https://github.com/jdtech3)
+* [Gary Zhou](https://github.com/GaryZhous/)
+
 ---
 
 *This project is licensed under NONE, TBD. For more information, please see TBD.*
