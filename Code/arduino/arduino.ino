@@ -48,6 +48,20 @@ void println_to_tft(char* str, double val) {
   tft.print(buf);
 }
 
+void calibration(double *a){
+  if(*a<=3.048){
+    *a += (0.05013386496*(*a) + (-0.2319683329));
+  }else if(*a <= 9.356){
+    *a += 0.03801254021*(*a) + (-0.1511130402);
+  }else if(*a <= 15.658){
+    *a += 0.03641967881*(*a) + (-0.07988468282);
+  }else if(*a <= 22.047){
+     *a += 0.0387455535*(*a) + (-0.05433042421);
+    }else{
+    *a += 0.03681099704*(*a) + (0.05546201889);
+    }
+}
+
 void setup() {
   // Pins
   pinMode(PIN_LED, OUTPUT);
@@ -89,7 +103,8 @@ void loop() {
     delay(MEASUREMENT_DELAY);
   }
   sum /= NUM_OF_MEASUREMENTS;
-
+  //calibration for Vout
+  calibration(&voltage);
   voltage = VOUT_CONVERSION(sum);
   println_to_tft("V: %.3f V", voltage);
 
@@ -106,7 +121,7 @@ void loop() {
 
   // Display I
   println_to_tft("I: %.3f A", current);
-
+  
   // Calculate and display P
   power = current * voltage;
   absolute_time_t new_time = get_absolute_time();// the new time stamp
