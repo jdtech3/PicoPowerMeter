@@ -11,7 +11,7 @@
 #define PIN_GNDREF              28
 
 // --- Number/speed of measurements to average ---
-#define NUM_OF_MEASUREMENTS     1000    // ~1000 is best
-#define MEASUREMENT_DELAY       1       // in ms
+#define NUM_OF_MEASUREMENTS     10000    // ~1000 is best
+#define MEASUREMENT_DELAY       0.05     // in ms
 
 #endif

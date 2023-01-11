@@ -17,7 +17,8 @@ extern "C" {                  // Reboot into USB mode
 #define TEXT_ROW_SPACING        15
 #define TEXT_FONT_SIZE          1
 
-#define VOUT_CONVERSION(x) ((( x * (3.295 / 4096.0) / 0.130383) - 0.22) * 1.048365)
+// #define VOUT_CONVERSION(x) ((( x * (3.295 / 4096.0) / 0.130383) - 0.22) * 1.048365)
+#define VOUT_CONVERSION(x) ( x * (3.3 / 4096.0) / 0.130383)
 #define ADC_correction (3.295/4096.0)
 
 TFT_eSPI tft = TFT_eSPI();
@@ -34,6 +35,25 @@ void reset_measurements() {
   current = 0.0;
   energy = 0.0;
   power = 0.0;
+}
+
+// Calibration of voltage
+double get_calibrated_voltage(double v){
+  if (v <= 3.048) {
+    return v + 0.05013386496*(v) + (-0.231968332926672);
+  }
+  else if (v <= 9.356) {
+    return v + 0.03801254021*(v) + (-0.1511130402);
+  }
+  else if (v <= 15.658) {
+    return v + 0.03641967881*(v) + (-0.07988468282);
+  }
+  else if (v <= 22.047) {
+    return v + 0.0387455535*(v) + (-0.05433042421);
+  }
+  else{
+    return v + 0.03681099704*(v) + (0.05546201889);
+  }
 }
 
 void println_to_tft(char* str, double val) {
@@ -91,7 +111,7 @@ void loop() {
   }
   sum /= NUM_OF_MEASUREMENTS;
 
-  voltage = VOUT_CONVERSION(sum);
+  voltage = get_calibrated_voltage(VOUT_CONVERSION(sum));
   println_to_tft("V: %.3f V", voltage);
 
   digitalWrite(PIN_LED, (voltage > 24.0) ? HIGH : LOW);   // overvoltage warning
@@ -110,7 +130,6 @@ void loop() {
 
   // Calculate and display P
   power = current * voltage;
-  Serial.println(power);
   absolute_time_t new_time = get_absolute_time();// the new time stamp
   println_to_tft("P: %.3f W", power);
 
