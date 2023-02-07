@@ -165,7 +165,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=YKVLNNBJ
 
 [Document8]
 DocumentPath=Libraries\SnapEDA\NZX3V3A\DIOAD820W60L400D200.PcbLib
@@ -320,51 +320,140 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
+[Document17]
+DocumentPath=JLCPCB.OutJob
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
 [GeneratedDocument1]
 DocumentPath=Project Outputs for Power_Meter\Design Rule Check - Power_Meter.html
 DItemRevisionGUID=
 
 [GeneratedDocument2]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_Copper_Signal_Bot.gbr
+DocumentPath=Project Outputs for Free Documents\NC Drill\Power_Meter.DRR
 DItemRevisionGUID=
 
 [GeneratedDocument3]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_Copper_Signal_Top.gbr
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.EXTREP
 DItemRevisionGUID=
 
 [GeneratedDocument4]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_Legend_Bot.gbr
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GBL
 DItemRevisionGUID=
 
 [GeneratedDocument5]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_Legend_Top.gbr
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GBO
 DItemRevisionGUID=
 
 [GeneratedDocument6]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_NPTH_Drill.gbr
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GBP
 DItemRevisionGUID=
 
 [GeneratedDocument7]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_Paste_Bot.gbr
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GBS
 DItemRevisionGUID=
 
 [GeneratedDocument8]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_Paste_Top.gbr
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GD1
 DItemRevisionGUID=
 
 [GeneratedDocument9]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_Profile.gbr
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GG1
 DItemRevisionGUID=
 
 [GeneratedDocument10]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_PTH_Drill.gbr
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GM
 DItemRevisionGUID=
 
 [GeneratedDocument11]
-DocumentPath=Project Outputs for Power_Meter\Power_Meter_Soldermask_Bot.gbr
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GPB
 DItemRevisionGUID=
 
 [GeneratedDocument12]
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GPT
+DItemRevisionGUID=
+
+[GeneratedDocument13]
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GTL
+DItemRevisionGUID=
+
+[GeneratedDocument14]
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GTO
+DItemRevisionGUID=
+
+[GeneratedDocument15]
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GTP
+DItemRevisionGUID=
+
+[GeneratedDocument16]
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.GTS
+DItemRevisionGUID=
+
+[GeneratedDocument17]
+DocumentPath=Project Outputs for Free Documents\NC Drill\Power_Meter.LDP
+DItemRevisionGUID=
+
+[GeneratedDocument18]
+DocumentPath=Project Outputs for Free Documents\Gerber\Power_Meter.REP
+DItemRevisionGUID=
+
+[GeneratedDocument19]
+DocumentPath=Project Outputs for Free Documents\NC Drill\Power_Meter.TXT
+DItemRevisionGUID=
+
+[GeneratedDocument20]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_Copper_Signal_Bot.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument21]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_Copper_Signal_Top.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument22]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_Legend_Bot.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument23]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_Legend_Top.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument24]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_NPTH_Drill.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument25]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_Paste_Bot.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument26]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_Paste_Top.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument27]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_Profile.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument28]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_PTH_Drill.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument29]
+DocumentPath=Project Outputs for Power_Meter\Power_Meter_Soldermask_Bot.gbr
+DItemRevisionGUID=
+
+[GeneratedDocument30]
 DocumentPath=Project Outputs for Power_Meter\Power_Meter_Soldermask_Top.gbr
 DItemRevisionGUID=
 

@@ -1,9 +1,15 @@
 Protel Design System Design Rule Check
 PCB File : R:\Downloads\PicoPowerMeter-main\Altium\Power_Meter.PcbDoc
 Date     : 2/5/2023
-Time     : 1:34:53 PM
+Time     : 2:25:09 PM
 
-Processing Rule : Clearance Constraint (Gap=0.254mm) (All),(All)
+Processing Rule : Clearance Constraint (Gap=0.203mm) (OnLayer('Top Layer')),(All)
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=0.2mm) (All),(All)
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=0.203mm) (OnLayer('Bottom Layer')),(All)
 Rule Violations :0
 
 Processing Rule : Short-Circuit Constraint (Allowed=No) (All),(All)
@@ -15,28 +21,34 @@ Rule Violations :0
 Processing Rule : Modified Polygon (Allow modified: No), (Allow shelved: No)
 Rule Violations :0
 
-Processing Rule : Width Constraint (Min=0.254mm) (Max=4mm) (Preferred=0.254mm) (All)
+Processing Rule : Width Constraint (Min=0.089mm) (Max=2.54mm) (Preferred=0.381mm) (All)
 Rule Violations :0
 
-Processing Rule : Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.508mm) (Air Gap=0.254mm) (Entries=4) (All)
+Processing Rule : Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.254mm) (Air Gap=0.254mm) (Entries=4) (All)
 Rule Violations :0
 
-Processing Rule : Hole Size Constraint (Min=0.025mm) (Max=2.54mm) (All)
+Processing Rule : Minimum Annular Ring (Minimum=0.076mm) (All)
+Rule Violations :0
+
+Processing Rule : Hole Size Constraint (Min=0.2mm) (Max=6.3mm) (All)
 Rule Violations :0
 
 Processing Rule : Hole To Hole Clearance (Gap=0.254mm) (All),(All)
 Rule Violations :0
 
-Processing Rule : Minimum Solder Mask Sliver (Gap=0.254mm) (All),(All)
+Processing Rule : Minimum Solder Mask Sliver (Gap=0.1mm) (All),(All)
 Rule Violations :0
 
-Processing Rule : Silk To Solder Mask (Clearance=0.254mm) (IsPad),(All)
+Processing Rule : Silk To Solder Mask (Clearance=0.1mm) (IsPad),(All)
 Rule Violations :0
 
-Processing Rule : Silk to Silk (Clearance=0.254mm) (All),(All)
+Processing Rule : Silk to Silk (Clearance=0.1mm) (All),(All)
 Rule Violations :0
 
 Processing Rule : Net Antennae (Tolerance=0mm) (All)
+Rule Violations :0
+
+Processing Rule : Board Clearance Constraint (Gap=0mm) (All)
 Rule Violations :0
 
 Processing Rule : Height Constraint (Min=0mm) (Max=25.4mm) (Prefered=12.7mm) (All)
