@@ -1,0 +1,21 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: Power_Meter.PcbDoc   2/10/2023  10:33:28 PM
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Power_Meter.TXT
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      16mil (0.4mm)                                             Round             4         PTH        0.89inch (22.54mm)
+T2      28mil (0.7mm)                                             Round             4         PTH        0.51inch (12.96mm)
+T3      28mil (0.711mm)                                           Round             12        PTH        5.13inch (130.20mm)
+T4      32mil (0.8mm)                                             Round             2         PTH        0.32inch (8.20mm)
+T5      34mil (0.864mm)                                           Round             8         PTH        3.56inch (90.31mm)
+T6      42mil (1.07mm)                                            Round             8         PTH        0.70inch (17.78mm)
+T7      47mil (1.2mm)                                             Round             4         PTH        1.92inch (48.74mm)
+T8      48mil (1.219mm)                                           Round             2         PTH        1.25inch (31.75mm)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              44
+
+Total Processing Time (hh:mm:ss) : 00:00:00
