@@ -1,6 +1,6 @@
 #include <Arduino.h>    // Arduino core
 #include "SPI.h"        // LCD
-#include "pico/time.h" //for time span measurement
+#include "pico/time.h"  // for time span measurement
 #include <TFT_eSPI.h>
 
 extern "C" {                  // Reboot into USB mode
@@ -26,8 +26,8 @@ TFT_eSPI tft = TFT_eSPI();
 double voltage;
 double current;
 double power;
-absolute_time_t last_measurement_time; //time stamp
-double temporary_pow = 0.0; //temporarily store a power value
+absolute_time_t last_measurement_time;  // time stamp
+double temporary_pow = 0.0;             // temporarily store a power value
 double energy;
 
 void reset_measurements() {
@@ -61,7 +61,7 @@ void println_to_tft(char* str, double val) {
   tft.setCursor(TEXT_START_COL_OFFSET, TEXT_START_ROW_OFFSET + tft.getCursorY() + TEXT_ROW_SPACING);
   tft.print("                ");
   tft.setCursor(TEXT_START_COL_OFFSET, tft.getCursorY());
-  
+
   // Format and print
   char buf[16];
   sprintf(buf, str, val);
@@ -74,8 +74,9 @@ void setup() {
   pinMode(PIN_VOUTDIV, INPUT);
   pinMode(PIN_VDROPAMP, INPUT);
   pinMode(PIN_GNDREF, INPUT);
-  //initialize serial communication
-  Serial.begin(9600);
+
+  Serial.begin(9600);   // initialize serial communication
+
   // TFT
   tft.init();
   tft.setRotation(1);
@@ -86,7 +87,7 @@ void setup() {
   analogReadResolution(12);
   digitalWrite(PS_PIN, HIGH);
   reset_measurements();
-  last_measurement_time = get_absolute_time();// the very first time stamp
+  last_measurement_time = get_absolute_time();  // the very first time stamp
 }
 
 void loop() {
@@ -130,13 +131,14 @@ void loop() {
 
   // Calculate and display P
   power = current * voltage;
-  absolute_time_t new_time = get_absolute_time();// the new time stamp
+  absolute_time_t new_time = get_absolute_time(); // new timestamp
   println_to_tft("P: %.3f W", power);
 
   // Calculate and display E
   energy += (power+temporary_pow)*absolute_time_diff_us(last_measurement_time, new_time)/(2*1000000);
   println_to_tft("E: %.3f J", energy);
   temporary_pow = power;
-  last_measurement_time = new_time;// pass on the time stamp
+  last_measurement_time = new_time;   // pass on the time stamp
+
   delay(10);  // slow down loop
 }
